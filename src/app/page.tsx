@@ -1,8 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 
-import Image from "next/image";
-
 type FoodCategory = {
   _id: number;
   categoryName: string;
@@ -11,7 +9,7 @@ export default function Home() {
   const [foodCategory, setFoodCategory] = useState<FoodCategory[]>([]);
 
   useEffect(() => {
-    const FetchFoodCategory = async () => {
+    const fetchFoodCategory = async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/food-category`
       );
@@ -19,11 +17,27 @@ export default function Home() {
       console.log(data);
       setFoodCategory(data);
     };
-    FetchFoodCategory();
+    fetchFoodCategory();
   }, []);
+  const addCategory = async () => {
+    const categoryName = prompt("Add category");
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/food-category`,
+      {
+        method: "POST",
+        body: JSON.stringify({ categoryName: categoryName }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await res.json();
+    setFoodCategory([...foodCategory, data]);
+  };
 
   return (
-    <div>
+    <div className="m-10">
       {foodCategory?.map((category) => {
         return (
           <div className="text-black" key={category._id}>
@@ -31,6 +45,14 @@ export default function Home() {
           </div>
         );
       })}
+      <div className="text-black">
+        <button
+          onClick={addCategory}
+          className="bg-slate-400 rounded-lg p-2 mt-10"
+        >
+          Add Category
+        </button>
+      </div>
     </div>
   );
 }
