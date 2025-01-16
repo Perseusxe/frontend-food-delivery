@@ -1,7 +1,8 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
-
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"] });
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,8 @@ import { useState, useEffect, use } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import Link from "next/link";
+import { EachCategory } from "./EachCategory";
 type FoodCategory = {
   _id: number;
   categoryName: string;
@@ -53,24 +56,25 @@ export const CategoryModal = () => {
     setCreateOpenModal(!createOpenModal);
   };
   const onChangeHandler = (e: any) => {
-    setInputValue(e.target.value);
-    if (inputValue == "") {
-      setIsDisabled(!isDisabled);
-    }
+    const value = e.target.value;
+    setInputValue(value);
+    setIsDisabled(!value.trim());
   };
   return (
-    <div>
+    <div className={`${inter.className}`}>
       <div className="bg-white p-6 rounded-xl">
-        <h1>Dishes category</h1>
+        <h1 className="mb-4 font-semibold text-xl">Dishes category</h1>
         <div className="flex flex-wrap gap-3">
           {foodCategory?.map((category) => (
-            <Badge
-              key={category._id}
-              variant="outline"
-              className="font-medium px-4 py-2 rounded-full"
-            >
-              {category.categoryName}
-            </Badge>
+            <Link key={category._id} href={`/admin/menu/${category._id}`}>
+              <Badge
+                key={category._id}
+                variant="outline"
+                className="font-medium px-4 py-2 rounded-full"
+              >
+                {category.categoryName}
+              </Badge>
+            </Link>
           ))}
         </div>
         <Dialog
@@ -99,6 +103,7 @@ export const CategoryModal = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <EachCategory foodCategory={foodCategory} />
     </div>
   );
 };
