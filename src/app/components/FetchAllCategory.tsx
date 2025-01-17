@@ -81,7 +81,7 @@ export const FetchEachCategory = ({ category }: Props) => {
         price: priceValue,
         ingredients: ingredientsValue,
         image: imageValue,
-        category: foodCategory._id,
+        category: filteredFoodCategory._id,
       }),
       headers: {
         "Content-Type": "application/json",
