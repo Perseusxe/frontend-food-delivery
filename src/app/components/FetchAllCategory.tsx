@@ -30,19 +30,19 @@ type Category = {
   categoryName: string;
 };
 type Props = {
-  foodCategory: Category;
+  category: Category;
 };
-export const EachCategory = ({ foodCategory }: Props) => {
+export const FetchEachCategory = ({ category }: Props) => {
   const [foods, setFoods] = useState<Foods[]>([]);
   const [foodValue, setFoodValue] = useState<string>();
   const [priceValue, setPriceValue] = useState<number>();
   const [ingredientsValue, setIngredientsValue] = useState<string>();
   const [createDialog, setCreateDialog] = useState(false);
   const [imageValue, setImageValue] = useState<string>();
-  const filteredFoodCategory = foodCategory;
+
+  const filteredFoodCategory = category;
 
   useEffect(() => {
-    console.log({ a: 1 });
     const fetchFoods = async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/food/${filteredFoodCategory._id}`

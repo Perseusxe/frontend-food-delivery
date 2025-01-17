@@ -18,8 +18,9 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { EachCategory } from "./EachCategory";
+import { useParams } from "next/navigation";
 type FoodCategory = {
-  _id: number;
+  _id: string;
   categoryName: string;
 };
 
@@ -28,6 +29,8 @@ export const CategoryModal = () => {
   const [inputValue, setInputValue] = useState<any>([]);
   const [createOpenModal, setCreateOpenModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const params = useParams();
+
   useEffect(() => {
     const fetchFoodCategory = async () => {
       const response = await fetch(
@@ -60,11 +63,19 @@ export const CategoryModal = () => {
     setInputValue(value);
     setIsDisabled(!value.trim());
   };
+
+  const selectedCategory = foodCategory?.find(
+    (category) => category._id === params.id
+  );
+
   return (
     <div className={`${inter.className}`}>
       <div className="bg-white p-6 rounded-xl">
         <h1 className="mb-4 font-semibold text-xl">Dishes category</h1>
         <div className="flex flex-wrap gap-3">
+          <Link href={`/admin/menu`}>
+            <Badge variant="outline">All Dishes</Badge>
+          </Link>
           {foodCategory?.map((category) => (
             <Link key={category._id} href={`/admin/menu/${category._id}`}>
               <Badge
@@ -103,7 +114,7 @@ export const CategoryModal = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <EachCategory foodCategory={foodCategory} />
+      {selectedCategory && <EachCategory foodCategory={selectedCategory} />}
     </div>
   );
 };

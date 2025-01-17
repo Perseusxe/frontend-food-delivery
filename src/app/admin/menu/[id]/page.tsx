@@ -17,7 +17,7 @@ export default function Home() {
             </Avatar>
           </div>
           <CategoryModal />
-          {/* <EachCategory /> */}
+          {/* <EachCategory  /> */}
         </div>
       </div>
     </div>
