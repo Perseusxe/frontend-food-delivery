@@ -1,6 +1,6 @@
-import { SideBar } from "../components/Sidebar";
+import { SideBar } from "../(components)/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CategoryModal } from "../components/Category";
+import { CategoryModal } from "../(components)/Category";
 export default function Home() {
   return (
     <div className="w-[1440px] mx-auto">

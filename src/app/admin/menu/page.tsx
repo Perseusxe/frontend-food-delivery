@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FetchEachCategory } from "@/app/components/FetchAllCategory";
-import { SideBar } from "@/app/components/Sidebar";
+import { FetchEachCategory } from "@/app/(components)/FetchAllCategory";
+import { SideBar } from "@/app/(components)/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { CategoryModal } from "@/app/components/Category";
-import { EachCategory } from "@/app/components/EachCategory";
+import { CategoryModal } from "@/app/(components)/Category";
+import { EachCategory } from "@/app/(components)/EachCategory";
 type FoodCategory = {
   _id: string;
   categoryName: string;

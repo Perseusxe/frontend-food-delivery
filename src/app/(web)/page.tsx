@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Header } from "../(components)/Header";
+
 
 type FoodCategory = {
   _id: number;
@@ -37,6 +39,8 @@ export default function Home() {
   };
 
   return (
+    <div>
+    <Header />
     <div className="m-10">
       {foodCategory?.map((category) => {
         return (
@@ -53,6 +57,7 @@ export default function Home() {
           Add Category
         </button>
       </div>
+    </div>
     </div>
   );
 }

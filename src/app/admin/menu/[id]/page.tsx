@@ -1,7 +1,7 @@
-import { SideBar } from "@/app/components/Sidebar";
+import { SideBar } from "@/app/(components)/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CategoryModal } from "@/app/components/Category";
-import { EachCategory } from "@/app/components/EachCategory";
+import { CategoryModal } from "@/app/(components)/Category";
+import { EachCategory } from "@/app/(components)/EachCategory";
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
