@@ -15,7 +15,6 @@ import { useState, useEffect, use } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import Link from "next/link";
 import { EachCategory } from "./EachCategory";
 import { useParams } from "next/navigation";
@@ -74,7 +73,7 @@ export const CategoryModal = () => {
         <h1 className="mb-4 font-semibold text-xl">Dishes category</h1>
         <div className="flex flex-wrap gap-3">
           <Link href={`/admin/menu`}>
-            <Badge variant="outline">All Dishes</Badge>
+            <Badge variant="outline" className="font-medium px-4 py-2 rounded-full">All Dishes</Badge>
           </Link>
           {foodCategory?.map((category) => (
             <Link key={category._id} href={`/admin/menu/${category._id}`}>
