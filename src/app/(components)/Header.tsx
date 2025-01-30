@@ -1,6 +1,92 @@
-import { ChevronRight } from "lucide-react";
+"use client";
+
+import { use, useEffect, useState } from "react";
+import { ChevronRight, Divide } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import { Minus } from "lucide-react";
+import { Plus } from "lucide-react";
+import type { Foods } from "./EachCategory";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+export type OrderItem = {
+  food: Foods;
+  quantity: number;
+};
 export const Header = () => {
+  const [isCart, setIsCart] = useState(true);
+  const [isOpen, setIsopen] = useState(false);
+  const [foodOrderItems, setFoodOrderItems] = useState<OrderItem[]>();
+  const deleteOrder = (id: string) => {
+    const updatedOrder = foodOrderItems?.filter(
+      (orderItem) => orderItem.food._id !== id
+    );
+    setFoodOrderItems(updatedOrder);
+    localStorage.setItem("orderItems", JSON.stringify(updatedOrder));
+  };
+  const onMinusOrderItem = (idx: Number) => {
+    console.log({ foodOrderItems, idx });
+    const newOrderItems = foodOrderItems?.map((orderItem, index) => {
+      if (idx === index && orderItem?.quantity > 1) {
+        console.log(orderItem);
+        return {
+          ...orderItem,
+          quantity: orderItem?.quantity - 1,
+        };
+      } else {
+        return orderItem;
+      }
+    });
+    setFoodOrderItems(newOrderItems as OrderItem[]);
+    localStorage.setItem("orderItems", JSON.stringify(newOrderItems));
+  };
+  const onPlusOrderItem = (idx: Number) => {
+    const newOrderItems = foodOrderItems?.map((orderItem, index) => {
+      if (idx === index) {
+        return {
+          ...orderItem,
+          quantity: orderItem?.quantity + 1,
+        };
+      } else {
+        return orderItem;
+      }
+    });
+    setFoodOrderItems(newOrderItems as OrderItem[]);
+    localStorage.setItem("orderItems", JSON.stringify(newOrderItems));
+  };
+  const calculateTotalPrice = (
+    foodOrderItems: OrderItem[] | undefined
+  ): number => {
+    if (!foodOrderItems || foodOrderItems.length === 0) return 0;
+
+    return foodOrderItems.reduce((total, orderItem) => {
+      return total + orderItem.food.price * orderItem.quantity;
+    }, 0);
+  };
+  const totalPrice = calculateTotalPrice(foodOrderItems);
+
+  useEffect(() => {
+    if (isOpen) {
+      const existingOrderString = localStorage.getItem("orderItems");
+      const existingOrder = JSON.parse(existingOrderString || "[]") || [];
+      setFoodOrderItems(existingOrder);
+    }
+  }, [isOpen]);
   return (
     <div className="bg-[#18181B] h-[68px] py-3 px-20 flex justify-between">
       <div className="flex items-center gap-3">
@@ -60,24 +146,127 @@ export const Header = () => {
           />
           <ChevronRight className="opacity-50" />
         </div>
-        <div className="rounded-full bg-white size-[36px] flex items-center justify-center">
-          <ShoppingCart className="size-[13.36px]" />
-        </div>
-        <div className="rounded-full bg-[#EF4444] size-[36px] flex items-center justify-center">
-          <svg
-            width="12"
-            height="14"
-            viewBox="0 0 12 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+        <Sheet open={isOpen} onOpenChange={setIsopen}>
+          <div
+            onClick={() => setIsopen(true)}
+            className="rounded-full bg-white size-[36px] flex items-center justify-center"
           >
-            <path
-              d="M10.6666 13V11.6667C10.6666 10.9594 10.3856 10.2811 9.88554 9.78105C9.38544 9.28095 8.70716 9 7.99992 9H3.99992C3.29267 9 2.6144 9.28095 2.1143 9.78105C1.6142 10.2811 1.33325 10.9594 1.33325 11.6667V13M8.66658 3.66667C8.66658 5.13943 7.47268 6.33333 5.99992 6.33333C4.52716 6.33333 3.33325 5.13943 3.33325 3.66667C3.33325 2.19391 4.52716 1 5.99992 1C7.47268 1 8.66658 2.19391 8.66658 3.66667Z"
-              stroke="#FAFAFA"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+            <ShoppingCart className="size-[13.36px]" />
+          </div>
+
+          <SheetContent className="bg-[#404040] border-none min-w-[500px]">
+            <SheetHeader>
+              <SheetTitle>
+                <div className="flex text-white gap-3 mb-6">
+                  <ShoppingCart />
+                  <h1 className="font-semibold text-xl">Order Detail</h1>
+                </div>
+              </SheetTitle>
+            </SheetHeader>
+
+            <div className="flex bg-white rounded-full">
+              <Button
+                onClick={() => setIsCart(true)}
+                className={`rounded-full w-full justify-center border-white border-[3px] ${
+                  isCart ? "bg-[#EF4444] text-white" : "bg-white"
+                }`}
+                variant="outline"
+              >
+                Cart
+              </Button>
+              <Button
+                onClick={() => setIsCart(false)}
+                className="rounded-full w-full justify-center border-white border-[3px]  focus:bg-[#EF4444] focus:text-white"
+                variant="outline"
+              >
+                Order
+              </Button>
+            </div>
+            {isCart && (
+              <div className="mt-6 bg-white rounded-[20px] p-4">
+                <h1 className="text-black mb-5 font-semibold text-xl">
+                  My Cart
+                </h1>
+                {foodOrderItems?.map((orderItem: any, idx: Number) => (
+                  <div
+                    className="pb-5 mb-5 flex gap-[10px] border-b-[1px] border-dashed"
+                    key={orderItem?.food?._id}
+                  >
+                    <div
+                      className="w-[124px] h-[120px] bg-center bg-no-repeat bg-cover rounded-xl"
+                      style={{
+                        backgroundImage: `url(${orderItem?.food.image}) `,
+                      }}
+                    ></div>
+
+                    <div className="flex-1">
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <h1 className="text-base font-bold text-[#EF4444]">
+                            {orderItem?.food?.foodName}
+                          </h1>
+                          <div
+                            onClick={() => deleteOrder(orderItem?.food?._id)}
+                            className=" bg-white rounded-full size-[36px] flex border-[1px] justify-center items-center"
+                          >
+                            <X className="size-[8px]" />
+                          </div>
+                        </div>
+                        <p className="text-xs w-[259px]">
+                          {orderItem?.food?.ingredients}
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between mt-6 items-center">
+                        <div className="flex gap-2 items-center">
+                          <Button
+                            onClick={() => onMinusOrderItem(idx)}
+                            variant="outline"
+                            className="flex justify-center items-center border-none ring-offset-0 size-[36px]"
+                          >
+                            <Minus />
+                          </Button>
+                          <h1 className="font-semibold">
+                            {orderItem?.quantity}
+                          </h1>
+                          <Button
+                            onClick={() => onPlusOrderItem(idx)}
+                            variant="outline"
+                            className="flex justify-center items-center border-none ring-offset-0 size-[36px]"
+                          >
+                            <Plus />
+                          </Button>
+                        </div>
+                        <span className="font-bold">
+                          ${orderItem?.food?.price * orderItem?.quantity}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <SheetClose className="w-full">
+                  <div className="border-[1px] py-2 w-full flex justify-center rounded-full text-[#EF4444] font-medium">
+                    Add Food
+                  </div>
+                </SheetClose>
+              </div>
+            )}
+            <div className="bg-white p-4 rounded-[20px] mt-6">
+              <h1>Payment info</h1>
+              <div>
+                <h2>Items</h2>
+                <h2>{totalPrice}</h2>
+              </div>
+              <div>
+                <h2>Items</h2>
+                <h2></h2>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        <div className="rounded-full border-[#EF4444] border-[1px] size-[36px] flex items-center justify-center">
+          <UserButton />
         </div>
       </div>
     </div>
